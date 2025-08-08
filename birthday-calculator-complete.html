@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">+++++
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 Happy Birthday Didi! - Birthday Calculator</title>
+    <meta name="description" content="A special birthday calculator to celebrate your didi's birthday with age calculations, fun facts, and celebratory features.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --birthday-pink: hsl(340, 33%, 26%);
+            --birthday-purple: hsl(291, 64%, 42%);
+            --birthday-coral: hsl(14, 100%, 60%);
+            --birthday-gold: hsl(36, 77%, 64%);
+            --birthday-blue: hsl(199, 89%, 64%);
+            --birthday-mint: hsl(327, 64%, 47%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--birthday-pink) 0%, var(--birthday-purple) 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Confetti Animation */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0, 0, 0); }
+            40%, 43% { transform: translate3d(0, -30px, 0); }
+            70% { transform: translate3d(0, -15px, 0); }
+            90% { transform: translate3d(0, -4px, 0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .animate-bounce {
+            animation: bounce 2.5s infinite;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            padding: 32px 16px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .cake-icon {
+            font-size: 64px;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .main-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 4vw, 1.25rem);
+            color: rgba(141, 21, 21, 0.9);
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-card {
+            max-width: 500px;
+            margin: 0 auto 32px auto;
+        }
+
+        .form-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--birthday-pink), var(--birthday-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .form-description {
+            color: #666;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--birthday-pink);
+            box-shadow: 0 0 0 4px rgba(233, 30, 99, 0.1);
+        }
+
+        .form-hint {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(to right, var(--birthday-pink), var(--birthday-purple));
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            padding: 16px 32px;
+            border-radius: 16px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.3);
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .result-card {
+            background: linear-gradient(145deg, #fff 0%, #fafafa 100%);
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .result-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .result-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--birthday-pink), var(--birthday-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .result-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Stats and Facts */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .stats-item:hover {
+            background: #f3f4f6;
+        }
+
+        .stats-label {
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stats-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--birthday-purple);
+        }
+
+        .fact-item {
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        .fact-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fact-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--birthday-purple);
+        }
+
+        /* Special Message */
+        .special-message {
+            background: linear-gradient(to right, rgba(233, 30, 99, 0.05), rgba(156, 39, 176, 0.05));
+            border: 2px solid rgba(233, 30, 99, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .message-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .message-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--birthday-pink), var(--birthday-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .message-text {
+            font-size: 18px;
+            color: #374151;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto 24px auto;
+        }
+
+        .celebration-tags {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .celebration-tag {
+            background: var(--birthday-pink);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .celebration-tag:nth-child(2) { background: var(--birthday-purple); }
+        .celebration-tag:nth-child(3) { background: var(--birthday-gold); }
+
+        /* Personal Details */
+        .personal-details {
+            margin-top: 32px;
+            padding: 24px;
+            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
+            border-radius: 16px;
+            border: 2px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .details-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--birthday-pink), var(--birthday-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .detail-item {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--birthday-purple);
+        }
+
+        .detail-note {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .end-message {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            text-align: center;
+        }
+
+        .end-message-text {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* Error Styles */
+        .error-card {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .error-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 8px;
+        }
+
+        .error-text {
+            color: #dc2626;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 0 12px; }
+            .card { padding: 24px; }
+            .results-grid { grid-template-columns: 1fr; }
+            .stats-container { grid-template-columns: 1fr; }
+            .celebration-tags { gap: 12px; }
+            .details-grid { grid-template-columns: 1fr; }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="cake-icon animate-bounce">🎂</div>
+        <h1 class="main-title">🎉 Happy Birthday Sweet Didi!!! 🎉</h1>
+        <p class="subtitle">IT is made by Anish 😏😏😏</p>
+    </div>
+
+    <div class="container">
+        <!-- Birthday Input Form -->
+        <div class="card form-card">
+            <h2 class="form-title">So Can you send me some money ,so i can buy gift for you 😆 🌟</h2>
+            <p class="form-description">I KNOW your Birthdate but i can't code it ,so enter your birthday😭</p>
+            
+            <form id="birthdayForm">
+                <div class="form-group">
+                    <label class="form-label">
+                        📅 Your Birth Date
+                    </label>
+                    <input type="date" id="birthDate" class="form-input" required>
+                    <p class="form-hint">
+                        ℹ️ JANI Le TOR birthday but ami orkom Create korte larbo so nijei de 08/08/2001
+                    </p>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    🪄 Discover My Birthday Magic! ✨
+                </button>
+            </form>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorCard" class="error-card hidden">
+            <div class="error-icon">⚠️</div>
+            <h3 class="error-title">Oops! Don't mess with my code <br>enter a valid Date </br></h3>
+            <p class="error-text" id="errorText"></p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <!-- Age Summary Cards -->
+            <div class="results-grid">
+                <div class="result-card">
+                    <span class="result-icon animate-pulse">🎂</span>
+                    <h3 class="result-title">Current Age</h3>
+                    <div class="result-value" id="ageYears">0</div>
+                    <div class="result-subtitle" id="ageDetail">years, months, days</div>
+                </div>
+                
+                <div class="result-card">
+                    <span class="result-icon animate-pulse">📅</span>
+                    <h3 class="result-title">Days Lived</h3>
+                    <div class="result-value" id="totalDays">0</div>
+                    <div class="result-subtitle">Amazing days of life!</div>
+                </div>
+                
+                <div class="result-card">
+                    <span class="result-icon animate-pulse">🎈</span>
+                    <h3 class="result-title">Next Birthday</h3>
+                    <div class="result-value" id="nextBirthday">0</div>
+                    <div class="result-subtitle" id="nextBirthdayText">days to go!</div>
+                </div>
+            </div>
+
+            <!-- Detailed Stats -->
+            <div class="stats-container">
+                <div class="card">
+                    <h3 class="result-title">⏰ Your Life in Numbers</h3>
+                    <div style="margin-top: 24px;">
+                        <div class="stats-item">
+                            <span class="stats-label">⏰ Hours</span>
+                            <span class="stats-value" id="totalHours">0</span>
+                        </div>
+                        <div class="stats-item">
+                            <span class="stats-label">⏰ Minutes</span>
+                            <span class="stats-value" id="totalMinutes">0</span>
+                        </div>
+                        <div class="stats-item">
+                            <span class="stats-label">💗 Seconds</span>
+                            <span class="stats-value" id="totalSeconds">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="result-title">⭐ Fun Birthday Facts</h3>
+                    <div style="margin-top: 24px;">
+                        <div class="fact-item" style="background: linear-gradient(to right, rgba(233, 30, 99, 0.1), rgba(156, 39, 176, 0.1));">
+                            <div class="fact-label">📅 Day of Birth</div>
+                            <div class="fact-value" id="dayOfWeek">Monday</div>
+                        </div>
+                        
+                        <div class="fact-item" style="background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));">
+                            <div class="fact-label">💎 Zodiac Sign</div>
+                            <div class="fact-value" id="zodiacSign">Aries ♈</div>
+                        </div>
+                        
+                        <div class="fact-item" style="background: linear-gradient(to right, rgba(231, 76, 60, 0.1), rgba(243, 156, 18, 0.1));">
+                            <div class="fact-label">🏆 Life Milestone</div>
+                            <div class="fact-value" id="milestone">Prime Time! 💪</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Birthday Message -->
+            <div class="special-message">
+                <span class="message-icon animate-bounce">🎉</span>
+                <h3 class="message-title">Wishing You the Happiest Birthday, Dear Didi!</h3>
+                <p class="message-text">
+                    AMI EI JAIGA AR ENGLISH E LEKHTE PARBO NAA AR ami web devoloper hote chai na so ai pura code ta ami likhi ni ........BTW HAPPY BIRTHDAY DIDI 🥳🥳🥳🥳 VULE JAI NI KINTU PROTEKBAR BORING VIDEO BANATE AR PARBO NA
+                </p>
+                <div class="celebration-tags">
+                    <span class="celebration-tag animate-pulse">🎂 Cake Time!</span>
+                    <span class="celebration-tag animate-pulse">🎈 Party Mode!</span>
+                    <span class="celebration-tag animate-pulse">✨ Make a Wish!</span>
+                </div>
+                
+                <!-- Personal Details Section -->
+                <div class="personal-details">
+                    <h4 class="details-title">Special Details About You</h4>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Name</div>
+                            <div class="detail-value">Jewel Chatterjee</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Favourite Novels</div>
+                            <div class="detail-value">SURJOTAMOSHI, AGNINIROY</div>
+                            <div class="detail-note">not NIBARSOPTOK</div>
+                        </div>
+                    </div>
+                    
+                    <!-- End Message -->
+                    <div class="end-message">
+                        <p class="end-message-text">
+                            ER THEKE BESI CODE KORLE AMAR KOMORE BETHA KORBE
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Zodiac signs and their date ranges
+        const zodiacSigns = [
+            'Capricorn ♑', 'Aquarius ♒', 'Pisces ♓', 'Aries ♈', 'Taurus ♉', 'Gemini ♊',
+            'Cancer ♋', 'Leo ♌', 'Virgo ♍', 'Libra ♎', 'Scorpio ♏', 'Sagittarius ♐'
+        ];
+
+        // Create confetti animation
+        function createConfetti() {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#E91E63', '#9C27B0', '#FF6B35', '#F39C12', '#3498DB', '#2ECC71'];
+            
+            for (let i = 0; i < 8; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[i % colors.length];
+                confetti.style.left = `${10 + (i * 10)}%`;
+                confetti.style.animationDelay = `${i * 0.5}s`;
+                container.appendChild(confetti);
+            }
+        }
+
+        function getZodiacSign(month, day) {
+            const dates = [20, 19, 21, 20, 21, 21, 23, 23, 23, 24, 22, 22];
+            return zodiacSigns[month - (day < dates[month - 1] ? 1 : 0)];
+        }
+
+        function calculateAge(birthDateString) {
+            const now = new Date();
+            const birth = new Date(birthDateString);
+            
+            // Basic age calculation
+            let years = now.getFullYear() - birth.getFullYear();
+            let months = now.getMonth() - birth.getMonth();
+            let days = now.getDate() - birth.getDate();
+            
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            // Total days lived
+            const totalDays = Math.floor((now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24));
+            
+            // Next birthday
+            const nextBirthday = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+            if (nextBirthday < now) {
+                nextBirthday.setFullYear(now.getFullYear() + 1);
+            }
+            const daysUntilBirthday = Math.ceil((nextBirthday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            
+            // Time units
+            const hours = totalDays * 24;
+            const minutes = hours * 60;
+            const seconds = minutes * 60;
+            
+            // Day of birth
+            const dayOfWeek = birth.toLocaleDateString('en-US', { weekday: 'long' });
+            
+            // Milestone based on age
+            let milestone = '';
+            if (years < 13) {
+                milestone = 'Childhood Wonder! 🌈';
+            } else if (years < 18) {
+                milestone = 'Teenage Dreams! 🌟';
+            } else if (years < 25) {
+                milestone = 'Young Adult! 🚀';
+            } else if (years < 40) {
+                milestone = 'Prime Time! 💪';
+            } else if (years < 60) {
+                milestone = 'Wisdom Years! 🧠';
+            } else {
+                milestone = 'Golden Years! 👑';
+            }
+            
+            return {
+                years,
+                months,
+                days,
+                totalDays,
+                daysUntilBirthday,
+                hours,
+                minutes,
+                seconds,
+                dayOfWeek,
+                zodiac: getZodiacSign(birth.getMonth() + 1, birth.getDate()),
+                milestone
+            };
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorCard').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('errorCard').classList.add('hidden');
+        }
+
+        function displayResults(results) {
+            // Update age summary
+            document.getElementById('ageYears').textContent = results.years;
+            document.getElementById('ageDetail').textContent = `${results.years} years, ${results.months} months, ${results.days} days`;
+            
+            document.getElementById('totalDays').textContent = results.totalDays.toLocaleString();
+            
+            if (results.daysUntilBirthday === 0) {
+                document.getElementById('nextBirthday').textContent = '🎉 TODAY! 🎉';
+                document.getElementById('nextBirthdayText').textContent = 'Happy Birthday!';
+            } else {
+                document.getElementById('nextBirthday').textContent = results.daysUntilBirthday;
+                document.getElementById('nextBirthdayText').textContent = 'days to go!';
+            }
+            
+            // Update detailed stats
+            document.getElementById('totalHours').textContent = results.hours.toLocaleString();
+            document.getElementById('totalMinutes').textContent = results.minutes.toLocaleString();
+            document.getElementById('totalSeconds').textContent = results.seconds.toLocaleString();
+            
+            // Update fun facts
+            document.getElementById('dayOfWeek').textContent = results.dayOfWeek;
+            document.getElementById('zodiacSign').textContent = results.zodiac;
+            document.getElementById('milestone').textContent = results.milestone;
+            
+            // Show results
+            document.getElementById('resultsSection').classList.remove('hidden');
+        }
+
+        // Form submission handler
+        document.getElementById('birthdayForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideError();
+            
+            const birthDate = document.getElementById('birthDate').value;
+            
+            if (!birthDate) {
+                showError('Please select your birth date.');
+                return;
+            }
+            
+            const birth = new Date(birthDate);
+            const now = new Date();
+            
+            if (birth > now) {
+                showError('Okay so You are a time travelor 😏🚀');
+                return;
+            }
+            
+            if (birth.getFullYear() < 1900) {
+                showError('You Should Die ..PLZZZZZZZZZZZZZZZZZZ DIE NOW  ☹️🙁');
+                return;
+            }
+            
+            try {
+                const results = calculateAge(birthDate);
+                displayResults(results);
+            } catch (error) {
+                showError('Something went wrong calculating your age. Please try again.');
+                console.error('Calculation error:', error);
+            }
+        });
+
+        // Initialize confetti on page load
+        createConfetti();
+
+        // Set max date to today
+        document.getElementById('birthDate').max = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
